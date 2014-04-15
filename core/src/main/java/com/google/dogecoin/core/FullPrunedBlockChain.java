@@ -154,7 +154,6 @@ public class FullPrunedBlockChain extends AbstractBlockChain {
         LinkedList<StoredTransactionOutput> txOutsSpent = new LinkedList<StoredTransactionOutput>();
         LinkedList<StoredTransactionOutput> txOutsCreated = new LinkedList<StoredTransactionOutput>();  
         long sigOps = 0;
-        final boolean enforcePayToScriptHash = block.getTimeSeconds() >= NetworkParameters.BIP16_ENFORCE_TIME;
         
         if (scriptVerificationExecutor.isShutdown())
             scriptVerificationExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -171,8 +170,6 @@ public class FullPrunedBlockChain extends AbstractBlockChain {
                     // being added twice (bug) or the block is a BIP30 violator.
                     if (blockStore.hasUnspentOutputs(hash, tx.getOutputs().size()))
                         throw new VerificationException("Block failed BIP30 test!");
-                    if (enforcePayToScriptHash) // We already check non-BIP16 sigops in Block.verifyTransactions(true)
-                        sigOps += tx.getSigOpCount();
                 }
             }
             BigInteger totalFees = BigInteger.ZERO;
@@ -198,12 +195,6 @@ public class FullPrunedBlockChain extends AbstractBlockChain {
                             throw new VerificationException("Tried to spend coinbase at depth " + (height - prevOut.getHeight()));
                         // TODO: Check we're not spending the genesis transaction here. Satoshis code won't allow it.
                         valueIn = valueIn.add(prevOut.getValue());
-                        if (enforcePayToScriptHash) {
-                            if (new Script(prevOut.getScriptBytes()).isPayToScriptHash())
-                                sigOps += Script.getP2SHSigOpCount(in.getScriptBytes());
-                            if (sigOps > Block.MAX_BLOCK_SIGOPS)
-                                throw new VerificationException("Too many P2SH SigOps in block");
-                        }
                         
                         prevOutScripts.add(new Script(prevOut.getScriptBytes()));
                         
@@ -236,7 +227,7 @@ public class FullPrunedBlockChain extends AbstractBlockChain {
                 
                 if (!isCoinBase && runScripts) {
                     // Because correctlySpends modifies transactions, this must come after we are done with tx
-                    FutureTask<VerificationException> future = new FutureTask<VerificationException>(new Verifier(tx, prevOutScripts, enforcePayToScriptHash));
+                    FutureTask<VerificationException> future = new FutureTask<VerificationException>(new Verifier(tx, prevOutScripts, false));
                     scriptVerificationExecutor.execute(future);
                     listScriptVerificationResults.add(future);
                 }
@@ -292,7 +283,6 @@ public class FullPrunedBlockChain extends AbstractBlockChain {
                 LinkedList<StoredTransactionOutput> txOutsSpent = new LinkedList<StoredTransactionOutput>();
                 LinkedList<StoredTransactionOutput> txOutsCreated = new LinkedList<StoredTransactionOutput>();
                 long sigOps = 0;
-                final boolean enforcePayToScriptHash = newBlock.getHeader().getTimeSeconds() >= NetworkParameters.BIP16_ENFORCE_TIME;
                 if (!params.isCheckpoint(newBlock.getHeight())) {
                     for(Transaction tx : transactions) {
                         Sha256Hash hash = tx.getHash();
@@ -321,13 +311,6 @@ public class FullPrunedBlockChain extends AbstractBlockChain {
                             if (newBlock.getHeight() - prevOut.getHeight() < params.getSpendableCoinbaseDepth())
                                 throw new VerificationException("Tried to spend coinbase at depth " + (newBlock.getHeight() - prevOut.getHeight()));
                             valueIn = valueIn.add(prevOut.getValue());
-                            if (enforcePayToScriptHash) {
-                                Script script = new Script(prevOut.getScriptBytes());
-                                if (script.isPayToScriptHash())
-                                    sigOps += Script.getP2SHSigOpCount(in.getScriptBytes());
-                                if (sigOps > Block.MAX_BLOCK_SIGOPS)
-                                    throw new VerificationException("Too many P2SH SigOps in block");
-                            }
                             
                             prevOutScripts.add(new Script(prevOut.getScriptBytes()));
                             
@@ -358,7 +341,7 @@ public class FullPrunedBlockChain extends AbstractBlockChain {
                     
                     if (!isCoinBase) {
                         // Because correctlySpends modifies transactions, this must come after we are done with tx
-                        FutureTask<VerificationException> future = new FutureTask<VerificationException>(new Verifier(tx, prevOutScripts, enforcePayToScriptHash));
+                        FutureTask<VerificationException> future = new FutureTask<VerificationException>(new Verifier(tx, prevOutScripts, false));
                         scriptVerificationExecutor.execute(future);
                         listScriptVerificationResults.add(future);
                     }

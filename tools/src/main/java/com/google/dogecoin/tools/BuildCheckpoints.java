@@ -93,10 +93,10 @@ public class BuildCheckpoints {
         checkState(manager.numCheckpoints() == checkpoints.size());
 
         if (PARAMS.getId() == NetworkParameters.ID_MAINNET) {
-        StoredBlock test = manager.getCheckpointBefore(1394276500);  // Just after block 131760
-        checkState(test.getHeight() == 131760);
-            checkState(test.getHeader().getHashAsString()
-                    .equals("8335a8d29326c09f35efe982e640b834e383db26e770d0fdbedabc718fb89272"));
+        StoredBlock test = manager.getCheckpointBefore(1397434899);  // Just after block 131760
+        checkState(test.getHeight() == 26640);
+        checkState(test.getHeader().getHashAsString()
+                    .equals("29ff0a9c3b0b351f090bad75c9b86b66c494047b19462e8268b78d15b65d6587"));
         } else if (PARAMS.getId() == NetworkParameters.ID_TESTNET) { // FIXME
             StoredBlock test = manager.getCheckpointBefore(1390500000); // Thu Jan 23 19:00:00 CET 2014
             checkState(test.getHeight() == 167328);

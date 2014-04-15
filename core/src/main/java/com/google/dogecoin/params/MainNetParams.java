@@ -19,6 +19,8 @@ package com.google.dogecoin.params;
 import com.google.dogecoin.core.NetworkParameters;
 import com.google.dogecoin.core.Utils;
 
+import java.math.BigInteger;
+
 import static com.google.common.base.Preconditions.checkState;
 
 /**
@@ -28,27 +30,24 @@ public class MainNetParams extends NetworkParameters {
     public MainNetParams() {
         super();
         interval = INTERVAL;
-        newInterval = INTERVAL_NEW;
         targetTimespan = TARGET_TIMESPAN;
-        newTargetTimespan = TARGET_TIMESPAN_NEW;
         proofOfWorkLimit = Utils.decodeCompactBits(0x1e0fffffL);
         dumpedPrivateKeyHeader = 158; //This is always addressHeader + 128
         addressHeader = 30;
         p2shHeader = 22;
-        acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
-        port = 22556;
-        packetMagic = 0xc0c0c0c0;
+        acceptableAddressCodes = new int[] { addressHeader };
+        port = 1337;
+        packetMagic = 0xfbc0b6db;
         genesisBlock.setDifficultyTarget(0x1e0ffff0L);
-        genesisBlock.setTime(1386325540L);
-        genesisBlock.setNonce(99943L);
+        genesisBlock.setTime(1394002925L);
+        genesisBlock.setNonce(386295993L);
         id = ID_MAINNET;
-        subsidyDecreaseBlockCount = 100000;
+        subsidyDecreaseBlockCount = 840000;
         spendableCoinbaseDepth = 100;
 
-        diffChangeTarget = 145000;
 
         String genesisHash = genesisBlock.getHashAsString();
-        checkState(genesisHash.equals("1a91e3dace36e2be3bf030a65679fe821aa1d6ef92e7c9902eb318182c355691"),
+        checkState(genesisHash.equals("192047379f33ffd2bbbab3d53b9c4b9e9b72e48f888eadb3dcf57de95a6038ad"),
                 genesisHash);
 
         // This contains (at a minimum) the blocks which are not BIP30 compliant. BIP30 changed how duplicate
@@ -63,10 +62,7 @@ public class MainNetParams extends NetworkParameters {
         //TODO Get actual Dogecoin checkpoints
 
         dnsSeeds = new String[] {
-                "seed.dogecoin.com",
-                "seed.mophides.com",
-                "seed.dglibrary.org",
-                "seed.dogechain.info",
+                "seed.defcoin.org",
         };
     }
 

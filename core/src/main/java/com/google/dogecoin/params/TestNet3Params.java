@@ -33,9 +33,7 @@ public class TestNet3Params extends NetworkParameters {
         // Genesis hash is bb0a78264637406b6360aad926284d544d7049f45189db5664f3c4d07350559e
         packetMagic = 0xfcc1b7dc;
         interval = INTERVAL;
-        newInterval = INTERVAL_NEW;
         targetTimespan = TARGET_TIMESPAN;
-        newTargetTimespan = TARGET_TIMESPAN_NEW;
         proofOfWorkLimit = Utils.decodeCompactBits(0x1e0ffff0L);
         port = 44556;
         addressHeader = 113;

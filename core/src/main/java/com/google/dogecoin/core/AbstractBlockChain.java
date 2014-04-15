@@ -800,14 +800,8 @@ public abstract class AbstractBlockChain {
         checkState(lock.isHeldByCurrentThread());
         Block prev = storedPrev.getHeader();
 
-        boolean newDiffAlgo = storedPrev.getHeight() + 1 >= params.getDiffChangeTarget();
         int retargetInterval = params.getInterval();
         int retargetTimespan = params.getTargetTimespan();
-        if (newDiffAlgo)
-        {
-            retargetInterval = params.getNewInterval();
-            retargetTimespan = params.getNewTargetTimespan();
-        }
         
         // Is this supposed to be a difficulty transition point?
         if ((storedPrev.getHeight() + 1) % retargetInterval != 0) {
@@ -860,14 +854,8 @@ public abstract class AbstractBlockChain {
         int timespan = (int) (prev.getTimeSeconds() - blockIntervalAgo.getTimeSeconds());
         final int targetTimespan = retargetTimespan;
 
-        if (newDiffAlgo)
-        {
-            timespan = retargetTimespan + (timespan - retargetTimespan)/8;
-            if (timespan < (retargetTimespan - (retargetTimespan/4)) ) timespan = (retargetTimespan - (retargetTimespan/4));
-            if (timespan > (retargetTimespan + (retargetTimespan/2)) ) timespan = (retargetTimespan + (retargetTimespan/2));
-        }
         // Limit the adjustment step.
-        else if (storedPrev.getHeight()+1 > 10000)
+        if (storedPrev.getHeight()+1 > 10000)
         {
             if (timespan < targetTimespan / 4)
                 timespan = targetTimespan / 4;
