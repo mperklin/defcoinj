@@ -1,13 +1,13 @@
 package wallettemplate;
 
 import com.aquafx_project.AquaFx;
-import com.google.dogecoin.core.NetworkParameters;
-import com.google.dogecoin.kits.WalletAppKit;
-import com.google.dogecoin.params.MainNetParams;
-import com.google.dogecoin.params.RegTestParams;
-import com.google.dogecoin.store.BlockStoreException;
-import com.google.dogecoin.utils.BriefLogFormatter;
-import com.google.dogecoin.utils.Threading;
+import com.google.defcoin.core.NetworkParameters;
+import com.google.defcoin.kits.WalletAppKit;
+import com.google.defcoin.params.MainNetParams;
+import com.google.defcoin.params.RegTestParams;
+import com.google.defcoin.store.BlockStoreException;
+import com.google.defcoin.utils.BriefLogFormatter;
+import com.google.defcoin.utils.Threading;
 import com.google.common.base.Throwables;
 import javafx.application.Application;
 import javafx.application.Platform;
